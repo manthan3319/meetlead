@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_brace_in_string_interps, deprecated_member_use, curly_braces_in_flow_control_structures
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
