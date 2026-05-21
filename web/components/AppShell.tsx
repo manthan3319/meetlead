@@ -51,7 +51,16 @@ export default function AppShell({ children, mode }: { children: React.ReactNode
     router.push('/login');
   };
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-fildbg flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-textgrey">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-fildbg flex">

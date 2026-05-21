@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api_service.dart';
 import '../config/constants.dart';
@@ -50,8 +51,21 @@ class AuthService {
   Future<UserModel?> currentUser() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(AppConstants.userKey);
-    if (raw == null) return null;
-    return UserModel.fromJson(jsonDecode(raw));
+    final token = await api.getToken();
+    if (raw == null || token == null) return null;
+    try {
+      final r = await api.dio.get('/auth/me');
+      final fresh = UserModel.fromJson(r.data['user']);
+      await prefs.setString(AppConstants.userKey, jsonEncode(fresh.toJson()));
+      return fresh;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        await api.clear();
+        await prefs.remove(AppConstants.userKey);
+        return null;
+      }
+      return UserModel.fromJson(jsonDecode(raw));
+    }
   }
 
   Future<void> logout() async {

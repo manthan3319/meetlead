@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const http = require('http');
 const { Server } = require('socket.io');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 const connectDB = require('./config/db');
 const { errorHandler, notFound } = require('./middleware/error');
@@ -46,8 +48,11 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 300 });
 app.use('/api', limiter);
 
 app.get('/', (req, res) => {
-  res.json({ name: 'MeetLead Pro API', version: '1.0.0', status: 'running' });
+  res.json({ name: 'MeetLead Pro API', version: '1.0.0', status: 'running', docs: '/api/docs' });
 });
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
+app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

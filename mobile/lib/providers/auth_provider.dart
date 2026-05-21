@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -77,10 +78,31 @@ class AuthProvider with ChangeNotifier {
   }
 
   String _humanError(dynamic e) {
+    if (e is DioException) {
+      final t = e.type;
+      if (t == DioExceptionType.connectionError ||
+          t == DioExceptionType.connectionTimeout) {
+        return 'Cannot reach server. Check internet/backend.';
+      }
+      final data = e.response?.data;
+      String? msg;
+      if (data is Map && data['message'] is String) {
+        msg = data['message'] as String;
+      } else if (data is String && data.isNotEmpty) {
+        msg = data;
+      }
+      msg ??= e.message;
+      final status = e.response?.statusCode;
+      if (msg != null && msg.isNotEmpty) {
+        debugPrint('Auth error [$status]: $msg');
+        return msg;
+      }
+      return status != null ? 'Request failed ($status)' : 'Network error';
+    }
     final s = e.toString();
-    if (s.contains('Invalid credentials')) return 'Wrong email or password';
-    if (s.contains('Email already')) return 'Email already registered';
-    if (s.contains('SocketException') || s.contains('Connection refused')) return 'Cannot reach server. Check internet/backend.';
-    return s.length > 120 ? s.substring(0, 120) : s;
+    if (s.contains('SocketException') || s.contains('Connection refused')) {
+      return 'Cannot reach server. Check internet/backend.';
+    }
+    return s.length > 160 ? s.substring(0, 160) : s;
   }
 }

@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'services/notification_service.dart';
-import 'screens/auth/login_screen.dart';
+import 'screens/auth/login_screen/view/login_screen.dart';
+import 'screens/auth/splash_screen/view/splash_screen.dart';
 import 'screens/dashboard/main_shell.dart';
 import 'screens/auth/subscription_required_screen.dart';
 
@@ -39,12 +40,7 @@ class _Bootstrap extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (_, auth, __) {
-        if (!auth.booted) {
-          return const Scaffold(
-            backgroundColor: AppColors.fildbg,
-            body: Center(child: CircularProgressIndicator(color: AppColors.primary)),
-          );
-        }
+        if (!auth.booted) return const SplashScreen();
         if (!auth.isAuthenticated) return const LoginScreen();
         final isAdmin = auth.user?.role == 'superadmin' || auth.user?.role == 'admin';
         if (!auth.hasActiveSubscription && !isAdmin) return const SubscriptionRequiredScreen();
