@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'config/theme.dart';
 import 'providers/auth_provider.dart';
 import 'services/notification_service.dart';
-import 'screens/auth/login_screen/view/login_screen.dart';
-import 'screens/auth/splash_screen/view/splash_screen.dart';
-import 'screens/dashboard/main_shell.dart';
-import 'screens/auth/subscription_required_screen/view/subscription_required_screen.dart';
+import 'module/auth/login_screen/view/login_screen.dart';
+import 'module/auth/splash_screen/view/splash_screen.dart';
+import 'module/dashboard/main_shell.dart';
+import 'module/auth/subscription_required_screen/view/subscription_required_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
