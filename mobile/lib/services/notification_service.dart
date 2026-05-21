@@ -55,7 +55,7 @@ class NotificationService {
       content: NotificationContent(
         id: id,
         channelKey: alarm ? 'meeting_alarms' : 'meeting_reminders',
-        title: alarm ? '⏰ MEETING NOW: $title' : title,
+        title: alarm ? 'MEETING NOW: $title' : title,
         body: body,
         notificationLayout: NotificationLayout.Default,
         wakeUpScreen: alarm,

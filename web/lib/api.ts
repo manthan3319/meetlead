@@ -1,8 +1,14 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+const _resolveBaseURL = () => {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  const host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+  return `http://${host}:5000/api`;
+};
+
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+  baseURL: _resolveBaseURL(),
   timeout: 20000,
 });
 

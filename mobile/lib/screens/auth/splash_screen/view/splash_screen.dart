@@ -1,35 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../config/theme.dart';
 import '../provider/splash_provider.dart';
 import '../widget/glow_circle.dart';
 import '../widget/loading_dots.dart';
 import '../widget/logo_badge.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  Widget build(BuildContext context) {
+    return const _SplashHost();
+  }
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashHost extends StatefulWidget {
+  const _SplashHost();
+
+  @override
+  State<_SplashHost> createState() => _SplashHostState();
+}
+
+class _SplashHostState extends State<_SplashHost>
     with TickerProviderStateMixin {
-  late final SplashProvider _provider;
+  late final SplashProvider _splash;
 
   @override
   void initState() {
     super.initState();
-    _provider = SplashProvider(this);
+    _splash = SplashProvider(this);
   }
 
   @override
   void dispose() {
-    _provider.dispose();
+    _splash.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    return Provider<SplashProvider>.value(
+      value: _splash,
+      child: const _SplashView(),
+    );
+  }
+}
+
+class _SplashView extends StatelessWidget {
+  const _SplashView();
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.read<SplashProvider>();
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -62,10 +85,10 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    LogoBadge(scale: _provider.scale),
+                    LogoBadge(scale: p.scale),
                     const SizedBox(height: 24),
                     FadeTransition(
-                      opacity: _provider.fade,
+                      opacity: p.fade,
                       child: const Text(
                         'MeetLead Pro',
                         style: TextStyle(
@@ -78,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                     const SizedBox(height: 6),
                     FadeTransition(
-                      opacity: _provider.fade,
+                      opacity: p.fade,
                       child: Text(
                         'Lead. Meet. Convert.',
                         style: TextStyle(
@@ -97,7 +120,7 @@ class _SplashScreenState extends State<SplashScreen>
                 bottom: 32,
                 child: Column(
                   children: [
-                    LoadingDots(controller: _provider.dotsCtrl),
+                    LoadingDots(controller: p.dotsCtrl),
                     const SizedBox(height: 12),
                     Text(
                       'Loading your workspace...',

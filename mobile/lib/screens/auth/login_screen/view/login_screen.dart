@@ -7,51 +7,24 @@ import '../provider/login_provider.dart';
 import '../widget/auth_hero.dart';
 import '../widget/field_label.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => LoginProvider(),
+      child: const _LoginView(),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  late final LoginProvider _provider;
-  bool _obscure = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _provider = LoginProvider();
-  }
-
-  @override
-  void dispose() {
-    _provider.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submit() async {
-    if (!_provider.formKey.currentState!.validate()) return;
-    FocusScope.of(context).unfocus();
-    final auth = context.read<AuthProvider>();
-    final ok = await auth.login(
-      _provider.emailController.text.trim(),
-      _provider.passwordController.text,
-    );
-    if (!mounted) return;
-    if (!ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(auth.error ?? 'Login failed'),
-          backgroundColor: AppColors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
+class _LoginView extends StatelessWidget {
+  const _LoginView();
 
   @override
   Widget build(BuildContext context) {
+    final p = context.watch<LoginProvider>();
     final auth = context.watch<AuthProvider>();
     return Scaffold(
       backgroundColor: AppColors.fildbg,
@@ -84,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ],
                           ),
                           child: Form(
-                            key: _provider.formKey,
+                            key: p.formKey,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
@@ -107,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const SizedBox(height: 22),
                                 const FieldLabel('Email'),
                                 TextFormField(
-                                  controller: _provider.emailController,
+                                  controller: p.emailController,
                                   keyboardType: TextInputType.emailAddress,
                                   textInputAction: TextInputAction.next,
                                   decoration: const InputDecoration(
@@ -118,15 +91,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                       size: 20,
                                     ),
                                   ),
-                                  validator: _provider.validateEmail,
+                                  validator: p.validateEmail,
                                 ),
                                 const SizedBox(height: 14),
                                 const FieldLabel('Password'),
                                 TextFormField(
-                                  controller: _provider.passwordController,
-                                  obscureText: _obscure,
+                                  controller: p.passwordController,
+                                  obscureText: p.obscure,
                                   textInputAction: TextInputAction.done,
-                                  onFieldSubmitted: (_) => _submit(),
+                                  onFieldSubmitted: (_) => p.submit(context),
                                   decoration: InputDecoration(
                                     hintText: 'Enter your password',
                                     prefixIcon: const Icon(
@@ -136,17 +109,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     suffixIcon: IconButton(
                                       icon: Icon(
-                                        _obscure
+                                        p.obscure
                                             ? Icons.visibility_outlined
                                             : Icons.visibility_off_outlined,
                                         color: AppColors.textgrey,
                                         size: 20,
                                       ),
-                                      onPressed: () =>
-                                          setState(() => _obscure = !_obscure),
+                                      onPressed: p.toggleObscure,
                                     ),
                                   ),
-                                  validator: _provider.validatePassword,
+                                  validator: p.validatePassword,
                                 ),
                                 Align(
                                   alignment: Alignment.centerRight,
@@ -182,7 +154,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 SizedBox(
                                   height: 50,
                                   child: ElevatedButton(
-                                    onPressed: auth.loading ? null : _submit,
+                                    onPressed: auth.loading
+                                        ? null
+                                        : () => p.submit(context),
                                     child: auth.loading
                                         ? const SizedBox(
                                             width: 22,
