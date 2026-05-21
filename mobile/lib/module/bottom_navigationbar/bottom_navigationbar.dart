@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'home_screen/view/home_screen.dart';
-import 'more_screen.dart';
-import '../leads/leads_screen.dart';
+import '../dashboard/home_screen/view/home_screen.dart';
+import '../dashboard/more_screen/more_screen.dart';
+import '../leads/view/leads_screen.dart';
 import '../meetings/meetings_screen.dart';
-import '../followups/followups_screen.dart';
+import '../followups/view/followups_screen.dart';
 import '../../config/theme.dart';
 import '../../widgets/voice_button.dart';
 

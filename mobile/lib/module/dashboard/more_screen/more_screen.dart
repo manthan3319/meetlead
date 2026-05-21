@@ -1,10 +1,10 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import '../../config/theme.dart';
-import '../followups/followups_screen.dart';
-import '../services/services_screen.dart';
-import '../settings/settings_screen.dart';
+import '../../../config/theme.dart';
+import '../../followups/view/followups_screen.dart';
+import '../../services/services_screen.dart';
+import '../../settings/settings_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});

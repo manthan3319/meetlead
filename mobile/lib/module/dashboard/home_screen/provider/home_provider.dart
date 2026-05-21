@@ -3,7 +3,7 @@ import '../../../../models/meeting_model.dart';
 import '../../../../services/api_service.dart';
 import '../../../../services/followup_service.dart';
 import '../../../../services/meeting_service.dart';
-import '../../../leads/lead_form_screen.dart';
+import '../../../leads/view/lead_form_screen.dart';
 import '../../../meetings/meeting_detail_screen.dart';
 import '../../../meetings/meeting_form_screen.dart';
 
