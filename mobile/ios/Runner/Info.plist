@@ -53,6 +53,19 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>MeetLead uses microphone for voice assistant — say commands like "Hey Meet, schedule a meeting".</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>MeetLead uses speech recognition to understand your voice commands offline.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>MeetLead can import contacts as leads.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

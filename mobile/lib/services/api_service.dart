@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/constants.dart';
 
 class ApiService {
@@ -7,7 +7,7 @@ class ApiService {
   factory ApiService() => _i;
 
   late final Dio dio;
-  final _storage = const FlutterSecureStorage();
+  String? _cachedToken;
 
   ApiService._internal() {
     dio = Dio(BaseOptions(
@@ -18,8 +18,10 @@ class ApiService {
 
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final token = await _storage.read(key: AppConstants.tokenKey);
-        if (token != null) options.headers['Authorization'] = 'Bearer $token';
+        try {
+          final token = await getToken();
+          if (token != null) options.headers['Authorization'] = 'Bearer $token';
+        } catch (_) {}
         handler.next(options);
       },
       onError: (e, handler) {
@@ -28,7 +30,22 @@ class ApiService {
     ));
   }
 
-  Future<void> saveToken(String token) => _storage.write(key: AppConstants.tokenKey, value: token);
-  Future<String?> getToken() => _storage.read(key: AppConstants.tokenKey);
-  Future<void> clear() => _storage.deleteAll();
+  Future<void> saveToken(String token) async {
+    _cachedToken = token;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(AppConstants.tokenKey, token);
+  }
+
+  Future<String?> getToken() async {
+    if (_cachedToken != null) return _cachedToken;
+    final prefs = await SharedPreferences.getInstance();
+    _cachedToken = prefs.getString(AppConstants.tokenKey);
+    return _cachedToken;
+  }
+
+  Future<void> clear() async {
+    _cachedToken = null;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(AppConstants.tokenKey);
+  }
 }
